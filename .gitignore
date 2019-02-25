@@ -17,3 +17,5 @@ datasets/
 *.Rhistory
 *.mp4
 *.db
+output/
+input/

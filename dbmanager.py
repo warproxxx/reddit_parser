@@ -120,7 +120,7 @@ class DBmanager():
                                          WHERE parent=?""", (node,))
             
             for row in cursor.fetchall():
-                print node, row['postid']
+                print(node, row['postid'])
                 propagate_thread(threadid, row['postid'])
                 
           
@@ -129,7 +129,7 @@ class DBmanager():
                                      WHERE parent IS NULL""")
         # Tell all descendants that postid=root
         for row in cursor.fetchall():
-            print "propagating from root...", row['postid']
+            print("propagating from root...", row['postid'])
 
             self.cursor.execute("""UPDATE posts SET thread=? WHERE postid=?""", 
                                    (row['postid'],row['postid']))

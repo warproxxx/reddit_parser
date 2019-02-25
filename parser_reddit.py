@@ -16,7 +16,7 @@ def parse_reddit():
     '''
     filepath = os.path.dirname(os.path.abspath(__file__))
     db = dbmanager.DBmanager(join('output', 'reddit.db'))
-    input_file = join(filepath, "input", "RC_2015-01", "reddit")
+    input_file = join(filepath, "input", "RC_2009-06")
     
 
     nposts = sum(1 for line in open(input_file, 'r'))
@@ -78,11 +78,11 @@ def parse_reddit():
                                                     
             #1 000 000
             if i%100000 == 0:
-                print "Processed", i, "/", nposts , 100.0*i/nposts, "posts/forum", 1.0*i/nforums
+                print("Processed", i, "/", nposts , 100.0*i/nposts, "posts/forum", 1.0*i/nforums)
             if i%20000000 == 0:
-                print "Processed", i, "/", nposts , 100.0*i/nposts, "posts/forum", 1.0*i/nforums
+                print("Processed", i, "/", nposts , 100.0*i/nposts, "posts/forum", 1.0*i/nforums)
                 db.dbcommit()
-                print "....................................."
+                print(".....................................")
         
         db.dbcommit()
         
@@ -90,8 +90,8 @@ def parse_reddit():
         # unconnected trees
         threads = db.get_all_threads().fetchall()
         nthreads = len(threads)
-        print "N threads:", len(threads)
-        print "N posts:", len(db.get_all_posts().fetchall())    
+        print("N threads:", len(threads))
+        print("N posts:", len(db.get_all_posts().fetchall()))
         
         complete_threads = 0
         ok_posts = 0
@@ -113,11 +113,11 @@ def parse_reddit():
         
         db.dbcommit()  
 
-        print "\nAfter cleaning:"
-        print "Complete threads", complete_threads, "/", nthreads
-        print "Post with parent in db", ok_posts
-        print "N threads final:", len(db.get_all_threads().fetchall())
-        print "N posts final:", len(db.get_all_posts().fetchall())            
+        print("\nAfter cleaning:")
+        print("Complete threads", complete_threads, "/", nthreads)
+        print("Post with parent in db", ok_posts)
+        print("N threads final:", len(db.get_all_threads().fetchall()))
+        print("N posts final:", len(db.get_all_posts().fetchall()))          
                   
     
         # Set (fake) date of root
