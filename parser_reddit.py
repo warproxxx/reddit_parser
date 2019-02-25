@@ -25,7 +25,11 @@ def process_file(fname):
             d = json.loads(line)
 
             try:
-                idstr = d["name"] # t1_cnas8zv
+                try:
+                    idstr = d["name"] # t1_cnas8zv
+                except:
+                    idstr = d["id"]
+
                 created = d["created_utc"]
                 author = d["author"]
                 parent = d["parent_id"] # t3_ if first level comment; else t1_... 
