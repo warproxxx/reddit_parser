@@ -59,9 +59,7 @@ def parse_reddit():
     Parse reddit from json files and store them in a SQLite database
     '''
     all_comments = glob('input/comments/*')
-    max_thread = len(all_comments)
-    p = Pool(max_thread)
-
-    p.map(process_file, all_comments)
+    for comment in all_comments:
+        process_file(comment)
         
 parse_reddit()
