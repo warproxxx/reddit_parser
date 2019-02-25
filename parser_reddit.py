@@ -23,17 +23,21 @@ def process_file(fname):
         for i, line in enumerate(f):
             
             d = json.loads(line)
-            idstr = d["name"] # t1_cnas8zv
-            created = d["created_utc"]
-            author = d["author"]
-            parent = d["parent_id"] # t3_ if first level comment; else t1_... 
-            submission = d["link_id"] # t3_... (id of root link)
-            body = d['body']
-            score = d['score']
-            upvotes = d['ups']
-            subreddit = d['subreddit']
-    
-            db.insert_comment(idstr, created, author, parent, submission, body, score, upvotes, subreddit)    
+
+            try:
+                idstr = d["name"] # t1_cnas8zv
+                created = d["created_utc"]
+                author = d["author"]
+                parent = d["parent_id"] # t3_ if first level comment; else t1_... 
+                submission = d["link_id"] # t3_... (id of root link)
+                body = d['body']
+                score = d['score']
+                upvotes = d['ups']
+                subreddit = d['subreddit']
+        
+                db.insert_comment(idstr, created, author, parent, submission, body, score, upvotes, subreddit)  
+            except Exception as e:
+                print(str(e))  
                                                     
             if i%100000 == 0:
                 print("Processed", i, "/", nposts , 100.0*i/nposts)
