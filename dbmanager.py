@@ -40,7 +40,7 @@ class DBmanager():
         '''Init empty tables to store comments and submissions''' 
         
         self.cursor.execute("""create table comments(
-                            postid TEXT     PRIMARY KEY, 
+                            postid TEXT, 
                             created INT,
                             author TEXT,
                             parent TEXT,
