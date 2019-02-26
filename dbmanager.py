@@ -64,7 +64,7 @@ class DBmanager():
                             upvotes INT,
                             subreddit TEXT,
                             num_comments INT,
-                            flair_text TEXT,
+                            flair_text TEXT
                             )""")
         
         
@@ -86,7 +86,7 @@ class DBmanager():
                             , (postid, created, author, parent, 
                                submission, body, score, upvotes, subreddit))
     
-    def insert_submissions(self, postid, created, self, nsfw, author, title, url, selftext, score, upvotes, subreddit, num_comments, flair_text):
+    def insert_submissions(self, postid, created, is_self, nsfw, author, title, url, selftext, score, upvotes, subreddit, num_comments, flair_text):
         try:
             self.cursor.execute("""INSERT INTO 
                                 submissions(
@@ -106,7 +106,7 @@ class DBmanager():
                                 ) 
                                 VALUES 
                                 (?,?,?,?,?,?,?,?,?,?,?,?,?)"""
-                                , (postid, created, self, nsfw, author, title, url, selftext, score, upvotes, subreddit, num_comments, flair_text))
+                                , (postid, created, is_self, nsfw, author, title, url, selftext, score, upvotes, subreddit, num_comments, flair_text))
         except:
             self.cursor.execute("""create table submissions(
                             postid TEXT, 
@@ -121,5 +121,5 @@ class DBmanager():
                             upvotes INT,
                             subreddit TEXT,
                             num_comments INT,
-                            flair_text TEXT,
+                            flair_text TEXT
                             )""")

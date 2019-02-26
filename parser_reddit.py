@@ -25,15 +25,18 @@ def process_file(fname, file_type="comment"):
     input_file = fname
     output_name = "{}.db".format(fname.split("/")[-1])
     full_output = join('output', output_name)
-    try:
-        os.remove(full_output)
-    except:
-        pass
-    
-    try:
-        os.remove(full_output + "-journal")
-    except:
-        pass
+
+    if file_type == "comment":
+        if os.path.isfile(full_output + "-journal"):
+            try:
+                os.remove(full_output)
+            except:
+                pass
+        
+            try:
+                os.remove(full_output + "-journal")
+            except:
+                pass
 
     db = dbmanager.DBmanager(full_output)
     nposts = sum(1 for line in open(input_file, 'r'))
@@ -69,7 +72,12 @@ def process_file(fname, file_type="comment"):
                     created = d["created_utc"]
                     is_self = d["is_self"]
                     nsfw = d["over_18"]
-                    author = d["author"] 
+                    
+                    author = "None"
+                    try:
+                        author = d["author"] 
+                    except:
+                        pass
                     title = d["title"] 
                     url = d["url"]
                     selftext = d["selftext"] 
@@ -79,9 +87,10 @@ def process_file(fname, file_type="comment"):
                     num_comments = d["num_comments"] 
                     flair_text = d["link_flair_text"]
 
-                    db.insert_submissions(postid=idstr, created=created, self=is_self, nsfw=nsfw, author=author, title=title, url=url, selftext=selftext, score=score, upvotes=upvotes, subreddit=subreddit, num_comments=num_comments, flair_text=flair_text)
+                    db.insert_submissions(postid=idstr, created=created, is_self=is_self, nsfw=nsfw, author=author, title=title, url=url, selftext=selftext, score=score, upvotes=upvotes, subreddit=subreddit, num_comments=num_comments, flair_text=flair_text)
             except Exception as e:
                 print(str(e))
+                print(d)
 
             if i%100000 == 0:
                 print("Processed", i, "/", nposts , 100.0*i/nposts)
@@ -120,7 +129,7 @@ def parse_reddit():
             command = "lbzip2 -d {}".format(submission)
             subprocess.check_call(command.split(" "))
             submission = submission.replace(".xz", "")
-        elif "bz2" in comment:
+        elif "bz2" in submission:
             command = "lbzip2 -d {}".format(submission)
             subprocess.check_call(command.split(" "))
             submission = submission.replace(".bz2", "")
