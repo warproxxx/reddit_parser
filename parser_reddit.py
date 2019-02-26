@@ -15,18 +15,18 @@ from multiprocessing import Pool
 def process_file(fname):
     input_file = fname
     output_name = "{}.db".format(fname.split("/")[-1])
-
+    full_output = join('output', output_name)
     try:
-        os.remove(output_name)
+        os.remove(full_output)
     except:
         pass
     
     try:
-        os.remove(output_name + "-journal")
+        os.remove(full_output + "-journal")
     except:
         pass
 
-    db = dbmanager.DBmanager(join('output', output_name))
+    db = dbmanager.DBmanager(full_output)
     nposts = sum(1 for line in open(input_file, 'r'))
     with open(input_file, 'r') as f:
         
