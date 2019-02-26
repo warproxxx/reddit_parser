@@ -15,6 +15,17 @@ from multiprocessing import Pool
 def process_file(fname):
     input_file = fname
     output_name = "{}.db".format(fname.split("/")[-1])
+
+    try:
+        os.remove(output_name)
+    except:
+        pass
+    
+    try:
+        os.remove(output_name + "-journal")
+    except:
+        pass
+
     db = dbmanager.DBmanager(join('output', output_name))
     nposts = sum(1 for line in open(input_file, 'r'))
     with open(input_file, 'r') as f:
@@ -59,7 +70,9 @@ def parse_reddit():
     Parse reddit from json files and store them in a SQLite database
     '''
     all_comments = glob('input/comments/*')
+    print(all_comments)
     for comment in all_comments:
+        print("Now doing: {}".format(comment))
         process_file(comment)
         
 parse_reddit()
