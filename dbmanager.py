@@ -51,6 +51,22 @@ class DBmanager():
                             subreddit TEXT
                             )""")
         
+        self.cursor.execute("""create table submissions(
+                            postid TEXT, 
+                            created INT,
+                            self INT,
+                            nsfw INT,
+                            author TEXT,
+                            title TEXT,
+                            url TEXT,
+                            selftext TEXT,
+                            score INT,
+                            upvotes INT,
+                            subreddit TEXT,
+                            num_comments INT,
+                            flair_text TEXT,
+                            )""")
+        
         
     def insert_comment(self, postid, created, author, parent, submission, body, score, upvotes, subreddit):
         self.cursor.execute("""INSERT INTO 
@@ -69,3 +85,41 @@ class DBmanager():
                             (?,?,?,?,?,?,?,?,?)"""
                             , (postid, created, author, parent, 
                                submission, body, score, upvotes, subreddit))
+    
+    def insert_submissions(self, postid, created, self, nsfw, author, title, url, selftext, score, upvotes, subreddit, num_comments, flair_text):
+        try:
+            self.cursor.execute("""INSERT INTO 
+                                submissions(
+                                postid, 
+                                created, 
+                                self, 
+                                nsfw, 
+                                author, 
+                                title, 
+                                url, 
+                                selftext, 
+                                score, 
+                                upvotes, 
+                                subreddit, 
+                                num_comments, 
+                                flair_text
+                                ) 
+                                VALUES 
+                                (?,?,?,?,?,?,?,?,?,?,?,?,?)"""
+                                , (postid, created, self, nsfw, author, title, url, selftext, score, upvotes, subreddit, num_comments, flair_text))
+        except:
+            self.cursor.execute("""create table submissions(
+                            postid TEXT, 
+                            created INT,
+                            self INT,
+                            nsfw INT,
+                            author TEXT,
+                            title TEXT,
+                            url TEXT,
+                            selftext TEXT,
+                            score INT,
+                            upvotes INT,
+                            subreddit TEXT,
+                            num_comments INT,
+                            flair_text TEXT,
+                            )""")
