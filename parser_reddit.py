@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Parses a json file where every entry represents a reddit comment.
-Store it in a mysql database with three tables: threads, users, posts.
-@author: Alberto Lumbreras
+Parses a json file where every entry represents a reddit comment/sumbission.
+@author: Daniel Sapkota
 """
 
 import os
@@ -12,15 +11,28 @@ import json
 from glob import glob
 from multiprocessing import Pool
 import subprocess
+import lzma
 
-def process_file(fname, file_type="comment"):
+def process_file(fname, file_type):
     '''
     Parameters:
     ___________
 
     file_type (string):
     comment or post
-    '''
+    '''        
+    if "xz" in fname:
+        extractedFile = fname.replace(".xz", "")
+        with lzma.open(fname) as f, open(extractedFile, 'wb') as fout:
+            file_content = f.read()
+            fout.write(file_content)
+        
+        os.remove(fname)
+        fname = extractedFile
+    elif "bz2" in comment:
+        command = "lbzip2 -d {}".format(fname)
+        subprocess.check_call(command.split(" "))
+        fname = fname.replace(".bz2", "")
 
     input_file = fname
     output_name = "{}.db".format(fname.split("/")[-1])
@@ -48,46 +60,168 @@ def process_file(fname, file_type="comment"):
                 d = json.loads(line)
 
                 if file_type == "comment":
+                    all_error = True
                     try:
                         idstr = d["name"] # t1_cnas8zv
+                        all_error = False
                     except:
                         idstr = d["id"]
 
-                    created = d["created_utc"]
-                    author = d["author"]
-                    parent = d["parent_id"] # t3_ if first level comment; else t1_... 
-                    submission = d["link_id"] # t3_... (id of root link)
-                    body = d['body']
-                    score = d['score']
-                    upvotes = d['ups']
-                    subreddit = d['subreddit']
-            
-                    db.insert_comment(postid=idstr, created=created, author=author, parent=parent, submission=submission, body=body, score=score, upvotes=upvotes, subreddit=subreddit)  
-                else:
+                    created = 0
                     try:
-                        idstr = d["name"] # t1_cnas8zv
-                    except:
-                        idstr = d["id"]
-                    
-                    created = d["created_utc"]
-                    is_self = d["is_self"]
-                    nsfw = d["over_18"]
-                    
-                    author = "None"
-                    try:
-                        author = d["author"] 
+                        created = d["created_utc"]
+                        all_error = False
                     except:
                         pass
-                    title = d["title"] 
-                    url = d["url"]
-                    selftext = d["selftext"] 
-                    score = d["score"]
-                    upvotes = d["ups"] 
-                    subreddit = d["subreddit"] 
-                    num_comments = d["num_comments"] 
-                    flair_text = d["link_flair_text"]
 
-                    db.insert_submissions(postid=idstr, created=created, is_self=is_self, nsfw=nsfw, author=author, title=title, url=url, selftext=selftext, score=score, upvotes=upvotes, subreddit=subreddit, num_comments=num_comments, flair_text=flair_text)
+                    author = ""
+                    try:
+                        author = d["author"]
+                        all_error = False
+                    except:
+                        pass
+
+                    parent = ""
+                    try:
+                        parent = d["parent_id"] # t3_ if first level comment; else t1_...
+                        all_error = False 
+                    except:
+                        pass
+
+                    submission = ""
+                    try:
+                        submission = d["link_id"] # t3_... (id of root link)
+                        all_error = False
+                    except:
+                        pass
+
+                    body = ""
+                    try:
+                        body = d['body']
+                        all_error = False
+                    except:
+                        pass
+
+                    score = 0
+                    try:
+                        score = d['score']
+                        all_error = False
+                    except:
+                        pass
+
+                    upvotes = 0
+                    try:
+                        upvotes = d['ups']
+                        all_error = False
+                    except:
+                        pass
+                    
+                    subreddit = ""
+                    try:
+                        subreddit = d['subreddit']
+                        all_error = False
+                    except:
+                        pass
+
+                    if all_error == False:
+                        db.insert_comment(postid=idstr, created=created, author=author, parent=parent, submission=submission, body=body, score=score, upvotes=upvotes, subreddit=subreddit)  
+                else:
+
+                    all_error = True
+
+                    try:
+                        idstr = d["name"] # t1_cnas8zv
+                        all_error = False
+                    except:
+                        idstr = d["id"]
+                    
+                    created = 0
+                    try:
+                        created = d["created_utc"]
+                        all_error = False
+                    except:
+                        pass
+
+                    is_self = ""
+                    try:
+                        is_self = d["is_self"]
+                        all_error = False
+                    except:
+                        pass
+
+                    nsfw = ""
+                    try:
+                        nsfw = d["over_18"]
+                        all_error = False
+                    except:
+                        pass
+                    
+                    author = ""
+                    try:
+                        author = d["author"] 
+                        all_error = False
+                    except:
+                        pass
+
+                    title = ""
+                    try:
+                        title = d["title"] 
+                        all_error = False
+                    except:
+                        pass
+
+                    url = ""
+                    try:
+                        url = d["url"]
+                        all_error = False
+                    except:
+                        pass
+
+                    selftext = ""
+                    try:
+                        selftext = d["selftext"] 
+                        all_error = False
+                    except:
+                        pass
+                    
+                    score = 0
+                    try:
+                        score = d["score"]
+                        all_error = False
+                    except:
+                        pass
+
+                    upvotes = 0
+                    try:
+                        upvotes = d["ups"] 
+                        all_error = False
+                    except:
+                        pass
+
+                    subreddit = ""
+                    try:
+                        subreddit = d["subreddit"] 
+                        all_error = False
+                    except:
+                        pass
+
+                    num_comments = 0
+                    try:
+                        num_comments = d["num_comments"] 
+                        all_error = False
+                    except:
+                        pass
+
+                    flair_text = ""
+
+                    try:
+                        flair_text = d["link_flair_text"]
+                        all_error = False
+                    except:
+                        pass
+
+                    if all_error == False:
+                        db.insert_submissions(postid=idstr, created=created, is_self=is_self, nsfw=nsfw, author=author, title=title, url=url, selftext=selftext, score=score, upvotes=upvotes, subreddit=subreddit, num_comments=num_comments, flair_text=flair_text)
             except Exception as e:
                 print(str(e))
                 print(d)
@@ -119,38 +253,26 @@ def clear_files():
             except:
                 pass
 
+def start_running(files, threads, file_type):
+    for i in range(threads, len(files), threads):
+        current_files = files[:len(files)]
+        files=files[len(files):]
+        p.map(process_file, current_files, [file_type] * len(current_files))
+
+    p.map(process_file, files, [file_type] * len(files))
+
+
 def parse_reddit():
     '''
     Parse reddit from json files and store them in a SQLite database
     '''
+    
     all_comments = glob('input/comments/*')
     all_submissions = glob('input/submissions/*')
+    max_thread = 6
 
-    for comment in all_comments:
-        print("Now doing: {}".format(comment))
-        if "xz" in comment:
-            command = "lbzip2 -d {}".format(comment)
-            subprocess.check_call(command.split(" "))
-            comment = comment.replace(".xz", "")
-        elif "bz2" in comment:
-            command = "lbzip2 -d {}".format(comment)
-            subprocess.check_call(command.split(" "))
-            comment = comment.replace(".bz2", "")
+    start_running(all_comments, max_thread, "comment")
+    start_running(all_submissions, max_thread, "submission")
 
-        process_file(comment)
-
-    for submission in all_submissions:
-        print("Now doing: {}".format(submission))
-        if "xz" in submission:
-            command = "lbzip2 -d {}".format(submission)
-            subprocess.check_call(command.split(" "))
-            submission = submission.replace(".xz", "")
-        elif "bz2" in submission:
-            command = "lbzip2 -d {}".format(submission)
-            subprocess.check_call(command.split(" "))
-            submission = submission.replace(".bz2", "")
-
-        process_file(submission, file_type="submission")   
-        
-# parse_reddit()
-clear_files()
+clear_files()       
+parse_reddit()
