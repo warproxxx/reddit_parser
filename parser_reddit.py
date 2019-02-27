@@ -92,9 +92,9 @@ def process_file(fname, file_type="comment"):
                 print(str(e))
                 print(d)
 
-            if i%100000 == 0:
+            if i%1000000 == 0:
                 print("Processed", i, "/", nposts , 100.0*i/nposts)
-            if i%20000000 == 0:
+            if i%200000000 == 0:
                 print("Processed", i, "/", nposts , 100.0*i/nposts)
                 db.dbcommit()
                 print(".....................................")
@@ -102,6 +102,22 @@ def process_file(fname, file_type="comment"):
         db.dbcommit()
 
     os.remove(fname)
+
+
+def clear_files():
+    all_files = glob('output/*')
+    
+    for file in all_files:
+        if os.path.isfile(file + "-journal"):
+            try:
+                os.remove(file)
+            except:
+                pass
+            
+            try:
+                os.remove(file + "-journal")
+            except:
+                pass
 
 def parse_reddit():
     '''
@@ -136,4 +152,5 @@ def parse_reddit():
 
         process_file(submission, file_type="submission")   
         
-parse_reddit()
+# parse_reddit()
+clear_files()
