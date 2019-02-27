@@ -29,7 +29,7 @@ def process_file(fname, file_type):
         
         os.remove(fname)
         fname = extractedFile
-    elif "bz2" in comment:
+    elif "bz2" in fname:
         command = "lbzip2 -d {}".format(fname)
         subprocess.check_call(command.split(" "))
         fname = fname.replace(".bz2", "")
@@ -254,19 +254,24 @@ def clear_files():
                 pass
 
 def start_running(files, threads, file_type):
+    p = Pool(threads)
+
     for i in range(threads, len(files), threads):
         current_files = files[:len(files)]
         files=files[len(files):]
-        p.map(process_file, current_files, [file_type] * len(current_files))
 
-    p.map(process_file, files, [file_type] * len(files))
+        file_types = [file_type] * len(current_files)
+        p.starmap(process_file, zip(current_files, file_types))
+
+    file_types = [file_type] * len(files)
+    p.starmap(process_file, zip(files, file_types))
 
 
 def parse_reddit():
     '''
     Parse reddit from json files and store them in a SQLite database
     '''
-    
+
     all_comments = glob('input/comments/*')
     all_submissions = glob('input/submissions/*')
     max_thread = 6
