@@ -273,10 +273,10 @@ def parse_reddit():
     '''
 
     all_comments = glob('input/comments/*')
-    # all_comments = [comment for comment in all_comments if ("bz2" not in comment) and ("xz" not in comment)]
+    all_comments = [comment for comment in all_comments if ("bz2" in comment) or ("xz" in comment)]
 
     all_submissions = glob('input/submissions/*')
-    max_thread = 6
+    max_thread = 2
 
     start_running(all_comments, max_thread, "comment")
     start_running(all_submissions, max_thread, "submission")
