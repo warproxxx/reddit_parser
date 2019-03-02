@@ -24,8 +24,8 @@ def process_file(fname, file_type):
     if "xz" in fname:
         extractedFile = fname.replace(".xz", "")
         with lzma.open(fname) as f, open(extractedFile, 'wb') as fout:
-            file_content = f.read()
-            fout.write(file_content)
+            for line in f:
+                fout.write(line)
         
         os.remove(fname)
         fname = extractedFile
@@ -274,9 +274,10 @@ def parse_reddit():
 
     all_comments = glob('input/comments/*')
     all_comments = [comment for comment in all_comments if ("bz2" in comment) or ("xz" in comment)]
+    print(all_comments)
 
     all_submissions = glob('input/submissions/*')
-    max_thread = 2
+    max_thread = 3
 
     start_running(all_comments, max_thread, "comment")
     start_running(all_submissions, max_thread, "submission")
